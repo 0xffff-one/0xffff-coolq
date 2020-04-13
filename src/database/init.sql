@@ -1,0 +1,7 @@
+
+CREATE TABLE IF NOT EXISTS "records" (
+	"id"	INTEGER PRIMARY KEY AUTOINCREMENT,
+	"title"	TEXT,
+	"url"	TEXT,
+	"guid"	TEXT UNIQUE
+);
