@@ -15,7 +15,7 @@ export async function initialize() {
  * 检查 DB 中是否有新的条目，计算差集
  * @param itemsList 需要检查的列表
  */
-export async function checkNewItems(itemsList: DBRecord[]) {
+export async function filterNewItems(itemsList: DBRecord[]) {
   const guids = itemsList.map((item) => item.guid);
   const sql = `SELECT *
     FROM records
