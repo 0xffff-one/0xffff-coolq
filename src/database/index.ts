@@ -11,13 +11,6 @@ export async function initialize() {
   }
 }
 
-export interface DBRecord {
-  id: number;
-  title: string;
-  url: string;
-  guid: string;
-};
-
 /**
  * 检查 DB 中是否有新的条目，计算差集
  * @param itemsList 需要检查的列表
@@ -36,14 +29,14 @@ export async function checkNewItems(itemsList: DBRecord[]) {
  * 往 DB 中插入新条目，返回新增行数
  * @param itemsList 需插入的条目
  */
-export async function insertItems(itemsList: DBRecord[]) {
+export async function insertItems(itemsList: Omit<DBRecord, "id">[]) {
   const result = await Promise.all(
     itemsList.map((item) => {
-      const sql = `INSERT INTO "records" ("id", "title", "url", "guid") VALUES (?, ?, ?, ?)`;
-      const { id, title, url, guid } = item;
+      const sql = `INSERT INTO "records" ("title", "url", "guid") VALUES (?, ?, ?)`;
+      const { title, url, guid } = item;
       return DB.run(
         sql,
-        [id, title, url, guid],
+        [title, url, guid],
       );
     })
   );
