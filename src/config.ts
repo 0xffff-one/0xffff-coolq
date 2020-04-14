@@ -1,4 +1,4 @@
-import * as path from 'path';
+import path from 'path';
 
 export const config = {
   db_path: path.join(__dirname, '../data/database.db'),

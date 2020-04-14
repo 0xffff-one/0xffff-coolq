@@ -3,7 +3,9 @@ import { config } from '../config';
 
 const pool = new Pool(config.db_path);
 
-export async function get<T>(sql: string, params: string[] = []) {
+type SQLParam = string | number;
+
+export async function get<T>(sql: string, params: SQLParam[] = []) {
   const db = await pool.acquire();
   const stmt = db.prepare(sql);
   const result = await stmt.get(...params) as T;
@@ -11,7 +13,7 @@ export async function get<T>(sql: string, params: string[] = []) {
   return result;
 }
 
-export async function all<T>(sql: string, params: string[] = []) {
+export async function all<T>(sql: string, params: SQLParam[] = []) {
   const db = await pool.acquire();
   const stmt = db.prepare(sql);
   const result = await stmt.all(...params) as T[];
@@ -19,7 +21,7 @@ export async function all<T>(sql: string, params: string[] = []) {
   return result;
 }
 
-export async function run(sql: string, params: string[] = []) {
+export async function run(sql: string, params: SQLParam[] = []) {
   const db = await pool.acquire();
   const stmt = db.prepare(sql);
   const result = await stmt.run(...params);

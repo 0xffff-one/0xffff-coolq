@@ -1,7 +1,7 @@
 import axios from 'axios';
-import { initialize } from './database';
+import * as DataBase from './database';
 
 (async () => {
-  const test = await initialize();
+  const test = await DataBase.initialize();
   const res = await axios.get('https://0xffff.one/');
 })();

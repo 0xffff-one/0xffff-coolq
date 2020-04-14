@@ -1,5 +1,5 @@
-import * as fs from "fs";
-import * as path from "path";
+import fs from "fs";
+import path from "path";
 import * as DB from "./db";
 
 export async function initialize() {
@@ -19,15 +19,33 @@ export interface DBRecord {
 };
 
 /**
- * 检查是否有新的条目，返回新条目
+ * 检查 DB 中是否有新的条目，计算差集
  * @param itemsList 需要检查的列表
  */
-export function checkNewItems(itemsList: Partial<DBRecord>[]) {
-  return itemsList;
+export async function checkNewItems(itemsList: DBRecord[]) {
+  const guids = itemsList.map((item) => item.guid);
+  const sql = `SELECT *
+    FROM records
+    WHERE guid in (${"?".repeat(guids.length).split("").join(",")})`;
+  const dbItems = await DB.all<DBRecord>(sql, guids);
+  const minusItems = itemsList.filter((item) => !dbItems.find(_item => _item.guid === item.guid));
+  return minusItems;
 }
 
 /**
- * 插入新条目
+ * 往 DB 中插入新条目，返回新增行数
  * @param itemsList 需插入的条目
  */
-export function insertItems(itemsList: Partial<DBRecord>[]) {}
+export async function insertItems(itemsList: DBRecord[]) {
+  const result = await Promise.all(
+    itemsList.map((item) => {
+      const sql = `INSERT INTO "records" ("id", "title", "url", "guid") VALUES (?, ?, ?, ?)`;
+      const { id, title, url, guid } = item;
+      return DB.run(
+        sql,
+        [id, title, url, guid],
+      );
+    })
+  );
+  return result.reduce((accu, curr) => accu + curr.changes, 0);
+}
