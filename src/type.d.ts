@@ -1,4 +1,3 @@
-
 interface Atom {
   feed: AtomFeed;
 }
